@@ -1,10 +1,16 @@
 (ns cljblog.handler
   (:require [compojure.core :refer :all]
             [compojure.route :as route]
-            [ring.middleware.defaults :refer [wrap-defaults site-defaults]]))
+            [ring.middleware.defaults :refer [wrap-defaults site-defaults]]
+            [cljblog.db :as db]))
+
+(defn index [_]
+  (->> (db/list-articles)
+       (map #(str "<h2>" (:title %) "</h1>"))
+       (apply str "<h1>Clojure Blog</h1>")))
 
 (defroutes app-routes
-  (GET "/" [] "Hello World")
+  (GET "/" [] index)
   (route/not-found "Not Found"))
 
 (def app
