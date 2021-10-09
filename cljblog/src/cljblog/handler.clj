@@ -2,15 +2,12 @@
   (:require [compojure.core :refer :all]
             [compojure.route :as route]
             [ring.middleware.defaults :refer [wrap-defaults site-defaults]]
-            [cljblog.db :as db]))
-
-(defn index [_]
-  (->> (db/list-articles)
-       (map #(str "<h2>" (:title %) "</h1>"))
-       (apply str "<h1>Clojure Blog</h1>")))
+            [cljblog.db :as db]
+            [cljblog.pages :as p]))
 
 (defroutes app-routes
-  (GET "/" [] index)
+  (GET "/" [] (p/index (db/list-articles)))
+  (GET "/articles/:article-id" [article-id] (p/article (db/get-article-by-id article-id)))
   (route/not-found "Not Found"))
 
 (def app

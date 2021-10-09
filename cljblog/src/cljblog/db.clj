@@ -1,6 +1,9 @@
 (ns cljblog.db
   (:require [monger.core :as mg]
-            [monger.collection :as mc]))
+            [monger.collection :as mc])
+
+(:import
+  [org.bson.types ObjectId]))
 
 (def db-connection-uri (or
                          (System/getenv "CLJBLOG_MONG_URI")
@@ -22,6 +25,9 @@
 (defn list-articles []
  (mc/find-maps db articles-coll))
 
-(defn find-article-by-title [title]
+(defn get-article-by-title [title]
   (mc/find-one db articles-coll
                {:title title}))
+
+(defn get-article-by-id [article-id]
+  (mc/find-map-by-id db articles-coll (ObjectId. article-id)))
